@@ -11,14 +11,35 @@ import AVFoundation
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var outpulLbl: UILabel!
+    
     var btnSound : AVAudioPlayer!
+    
+    enum Operation: String {
+        case Divide = "/"
+        case Multiply = "*"
+        case Add = "+"
+        case Subtract = "-"
+        case Empty = "Empty"
+    }
+    
+    var currentOperation = Operation.Empty
+    var runningNumber = ""
+    var leftValStr = ""
+    var rightValStr = ""
+    var result = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupSound()
+        
+    }
+    
+    func setupSound() {
         let path = Bundle.main.path(forResource: "btn", ofType: "wav")
         let soundURL = URL(fileURLWithPath: path!)
-    
+        
         do{
             try btnSound = AVAudioPlayer(contentsOf: soundURL)
             btnSound.prepareToPlay()
@@ -28,21 +49,53 @@ class ViewController: UIViewController {
     }
     
     @IBAction func numberPressed(sender: UIButton) {
+        playSound()
         
+        runningNumber += "\(sender.tag)"
+        
+        outpulLbl.text = runningNumber
+    }
+    
+    func playSound() {
         // stop if currently playing
         if btnSound.isPlaying{
-            btnSound.play()
+            btnSound.stop()
         }
         
         btnSound.play()
     }
     
-    func playSound() {
-        
+    func processOperation(operation: Operation) {
+        if currentOperation != Operation.Empty {
+            
+            //if an operation was selected but was followed by another operator
+            if runningNumber != "" {
+                rightValStr = runningNumber
+                runningNumber = ""
+                
+                if currentOperation == Operation.Multiply {
+                    result = "\(Double(leftValStr)! * Double(rightValStr)!)"
+                } else if currentOperation == Operation.Divide {
+                    result = "\(Double(leftValStr)! / Double(rightValStr)!)"
+                } else if currentOperation == Operation.Subtract {
+                    result = "\(Double(leftValStr)! - Double(rightValStr)!)"
+                } else if currentOperation == Operation.Add {
+                    result = "\(Double(leftValStr)! + Double(rightValStr)!)"
+                }
+                
+                leftValStr = result
+                outpulLbl.text = result
+            }
+            
+            currentOperation = operation
+        }
     }
 
-    
-
-
 }
+
+
+
+
+
+
 
