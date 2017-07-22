@@ -34,6 +34,8 @@ class ViewController: UIViewController {
         
         setupSound()
         
+        outpulLbl.text = "0"
+        
     }
     
     func setupSound() {
@@ -56,6 +58,26 @@ class ViewController: UIViewController {
         outpulLbl.text = runningNumber
     }
     
+    @IBAction func onDividePressed(sender: AnyObject) {
+        processOperation(operation: .Divide)
+    }
+    
+    @IBAction func onMultiplyPressed(sender: AnyObject) {
+        processOperation(operation: .Multiply)
+    }
+    
+    @IBAction func onSubtractPressed(sender: AnyObject) {
+        processOperation(operation: .Subtract)
+    }
+    
+    @IBAction func onAddPressed(sender: AnyObject) {
+        processOperation(operation: .Add)
+    }
+    
+    @IBAction func onEqualPressed(sender: AnyObject) {
+        processOperation(operation: currentOperation)
+    }
+    
     func playSound() {
         // stop if currently playing
         if btnSound.isPlaying{
@@ -66,6 +88,8 @@ class ViewController: UIViewController {
     }
     
     func processOperation(operation: Operation) {
+        playSound()
+        
         if currentOperation != Operation.Empty {
             
             //if an operation was selected but was followed by another operator
@@ -88,6 +112,11 @@ class ViewController: UIViewController {
             }
             
             currentOperation = operation
+        } else {
+            //This is the first time an operator has been pressed
+            leftValStr = runningNumber
+            runningNumber = ""
+             currentOperation = operation
         }
     }
 
